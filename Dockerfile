@@ -6,6 +6,7 @@ RUN ls -alF /app
 
 RUN apt update && apt install -y vim
 RUN npm install -g npm@10.8.2
+RUN npm ci
 
 # gitに追記
 RUN echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
