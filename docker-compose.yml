@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: slack_icon_printer
+    build:
+      context: .
+    volumes:
+      - ./main:/app
+    environment:
+      LANG: C.UTF-8
+      TZ: Asia/Tokyo
+    ports:
+      - ${FRONTEND_PORT}:5173
+    tty: true
+    stdin_open: true
+    command: bash -c "npm run dev"
+    # command: bash
