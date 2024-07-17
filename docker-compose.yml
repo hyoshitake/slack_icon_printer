@@ -16,3 +16,16 @@ services:
     stdin_open: true
     command: bash -c "npm run dev"
     # command: bash
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    ports:
+      - 4040:4040
+    volumes:
+      - .\ngrok.yml:/etc/ngrok.yml

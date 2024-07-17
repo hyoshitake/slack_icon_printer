@@ -22,6 +22,7 @@
     </template>
     <template v-else-if="result">
       <div class="m-4 no-print">
+        <p>メンバー数：{{ result.length }}</p>
         <span>画像サイズ</span
         ><el-input v-model="iconSize" class="w-12 ml-2" />px
         <span class="ml-4">縦余白</span
@@ -37,10 +38,10 @@
         <hr class="mt-4" />
       </div>
       <div :style="pageStyleObject" class="page">
-        <ul class="grid" :style="iconStyleObject">
+        <ul class="grid" :style="gridStyleObject">
           <li v-for="user in result" :key="user.id" class="">
             <div>
-              <el-image :src="user.image_512" fit="fill" />
+              <el-image :src="user.image_512" fit="fill" style="width: 100%" />
             </div>
             <div v-if="showName">{{ user.real_name }}</div>
           </li>
@@ -67,11 +68,10 @@ const iconSize = ref<number>(200);
 const pageStyleObject = computed(() => ({
   padding: `${yohakuY.value}px ${yohakuX.value}px`,
 }));
-const iconStyleObject = computed(() => ({
+const gridStyleObject = computed(() => ({
   gap: `${gridGapRow.value}px ${gridGapColumn.value}px`,
   "grid-template-columns": `repeat(auto-fit, minmax(${iconSize.value}px, 1fr))`,
 }));
-
 onMounted(() => {});
 
 // SlackAPIを叩いてユーザ一覧を取得する
@@ -86,12 +86,21 @@ const fetchUserList = async () => {
     .then((response: any) => {
       const members = response.data?.members;
       if (members && members.length > 0) {
-        result.value = members.map((member: any) => ({
-          id: member.id,
-          name: member.name,
-          real_name: member.name,
-          image_512: member.profile?.image_512,
-        }));
+        console.log(members);
+        result.value = members
+          .filter(
+            (member: any) =>
+              member.deleted == false &&
+              member.is_bot == false &&
+              member.is_restricted == false
+          )
+          .map((member: any) => ({
+            id: member.id,
+            name: member.name,
+            real_name: member.name,
+            image_512: member.profile?.image_512,
+            display_name: member.profile?.display_name,
+          }));
       } else {
         slackApiError.value = "メンバーが1人もいませんでした";
       }
