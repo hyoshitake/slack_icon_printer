@@ -2,11 +2,11 @@ FROM node:20
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./main/package*.json ./
 
 RUN apt update && apt install -y vim
 RUN npm install
 
-COPY . .
+COPY ./main .
 
 CMD ["npm", "run", "dev"]
